@@ -3,14 +3,15 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net"
+
 	"github.com/brianvoe/gofakeit"
 	desc "github.com/dovgalb/auth_grpc/pkg/auth_v1"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"google.golang.org/protobuf/types/known/timestamppb"
-	"log"
-	"net"
 )
 
 const grpcPort = 50051
@@ -20,11 +21,11 @@ type server struct {
 }
 
 func (s *server) Create(ctx context.Context, req *desc.CreateRequest) (*desc.CreateResponse, error) {
-	userId := gofakeit.Int64()
+	userID := gofakeit.Int64()
 
-	log.Printf("create user_id: %d", userId)
+	log.Printf("create user_id: %d", userID)
 
-	response := desc.CreateResponse{Id: userId}
+	response := desc.CreateResponse{Id: userID}
 	return &response, nil
 }
 
@@ -35,7 +36,7 @@ func (s *server) Get(ctx context.Context, req *desc.GetRequest) (*desc.GetRespon
 		Id:        req.GetId(),
 		Name:      gofakeit.BeerName(),
 		Email:     gofakeit.Email(),
-		Role:      desc.Role(gofakeit.Number(0, 2)),
+		Role:      desc.Role(int32(gofakeit.Number(0, 2))),
 		CreatedAt: timestamppb.New(gofakeit.Date()),
 		UpdatedAt: timestamppb.New(gofakeit.Date()),
 	}
